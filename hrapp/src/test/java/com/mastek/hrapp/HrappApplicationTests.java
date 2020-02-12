@@ -9,10 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.mastek.hrapp.dao.DepartmentJPADAO;
 import com.mastek.hrapp.dao.EmployeeJPADAO;
+import com.mastek.hrapp.dao.JobPositionDAO;
+import com.mastek.hrapp.dao.PaymentJPADAO;
 import com.mastek.hrapp.dao.ProjectJPADAO;
+import com.mastek.hrapp.entities.CardPayment;
+import com.mastek.hrapp.entities.ChequePayment;
 import com.mastek.hrapp.entities.Department;
 import com.mastek.hrapp.entities.Designation;
 import com.mastek.hrapp.entities.Employee;
+import com.mastek.hrapp.entities.JobPosition;
+import com.mastek.hrapp.entities.Payment;
 import com.mastek.hrapp.entities.Project;
 import com.mastek.hrapp.services.DepartmentService;
 import com.mastek.hrapp.services.EmployeeService;
@@ -48,6 +54,117 @@ class HrappApplicationTests {
 	
 	@Autowired
 	ProjectJPADAO proDAO;
+	
+	@Autowired
+	PaymentJPADAO paymentDAO;
+	
+	@Autowired
+	JobPositionDAO jobDAO;
+	
+	@Test
+	void testApplyForJobPosition() {
+		int jobId=122;
+		int empno=16;
+		JobPosition jp = empSvc.applyForJobPosition(122, 16);
+		assertNotNull(jp, "Job not Applied");
+		for (Employee applicant : jp.getApplicants()) {
+			System.out.println(applicant);
+			
+		}
+	}
+	
+	//@Test
+	void testAddJobPositionDocument() {
+		JobPosition jp = new JobPosition();
+		jp.setJobId(122);
+		jp.setLocation("Leeds");
+		jp.setClientName("NHS");
+		jp.setSkillsRequired("Java");
+		jp.setNumberofPositions(3);
+		
+		jp = jobDAO.save(jp);
+		
+		assertNotNull(jp,"Job Position Not Saved");
+		
+		
+	}
+	
+	@Test
+	void TestListAllJobPositions(){
+		System.out.println("Print All Job Positions");
+		for (JobPosition jp : jobDAO.findAll()) {
+			System.out.println(jp);	}
+	}
+	//@Test
+	void testCashPaymentAdd() {
+		Payment cashP = new Payment();
+		cashP.setAmount(200);
+		
+		cashP= paymentDAO.save(cashP);
+		
+		System.out.println(cashP);
+		assertNotNull(cashP, "Cash Paymeny Not Saved");
+		
+		
+		
+	}
+	
+	//@Test
+	void testChequePaymentAdd() {
+		ChequePayment cheqP = new ChequePayment();
+		cheqP.setAmount(777);
+		cheqP.setChequeNumber(65656565);
+		cheqP.setBankName("RBS");
+		
+		cheqP= paymentDAO.save(cheqP);
+		
+		System.out.println(cheqP);
+		assertNotNull(cheqP, "Cheque Paymeny Not Saved");
+		
+		
+		
+	}
+	
+	//@Test
+	void testCardPaymentAdd() {
+		CardPayment cardP = new CardPayment();
+		cardP.setAmount(666);
+		cardP.setCardNumber(89898989);
+		cardP.setCardService("VISA");
+		
+		cardP= paymentDAO.save(cardP);
+		
+		System.out.println(cardP);
+		assertNotNull(cardP, "Card Payment Not Saved");
+		
+		
+		
+	}
+	
+	@Test
+	void testFindEmployeeBySalary() {
+		int minSalary=100;
+		int maxSalary=5000;
+		Iterable<Employee> emps = empDAO.findBySalary(minSalary, maxSalary);
+		System.out.println("All Employees having Salary between min: "+minSalary+" and max: "+maxSalary);
+		
+		for (Employee employee : emps) {
+			System.out.println(employee);
+		}
+		
+	}
+	
+	@Test
+	void testFindEmployeeByDesignation() {
+		Iterable<Employee> emps  = empDAO.findByDesignation(Designation.MANAGER);
+		
+		System.out.println("All Employees with Designation as "+Designation.MANAGER);
+		
+		for (Employee employee : emps) {
+			System.out.println(employee);
+		}
+		
+	}
 	
 	
 
@@ -103,7 +220,7 @@ class HrappApplicationTests {
 //			depSvc1.exampleMethod();
 //	}
 	
-	//@Test
+	@Test
 	void testDepartmentDAOadd() {
 		Department dep = new Department();
 		dep.setName("admin");
@@ -132,7 +249,7 @@ class HrappApplicationTests {
 //		
 //	}
 	
-	//@Test
+	@Test
 	void testProjectDAOadd() {
 		Project pro = new Project();
 		pro.setName("New Project");
@@ -153,17 +270,19 @@ class HrappApplicationTests {
 			System.out.println(project);
 		}
 	}
-		@Test
+		//@Test
 		void testAssignEmployeeToDepartment() {
 			Employee emp = empSvc.assignEmployeeToDepartment(1,11);
 			assertNotNull(emp.getCurrentDepartment(),"Department not Assigned");
 		
 	}
 		
-		@Test
+		//@Test
 		void testAssignEmployeeToProject() {
 			Employee emp = empSvc.assignEmployeeToProject(1, 12);
 			assertTrue(emp.getProjectsAssigned().size()>0,"Projects Assigned");
 		
 		}
+		
+		
 }

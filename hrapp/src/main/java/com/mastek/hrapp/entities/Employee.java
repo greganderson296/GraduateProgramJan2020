@@ -16,11 +16,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity //declares the class as Entity, to be managed by JPA
 @Table(name="JPA_Employees") //declare the table name associated with this class
-@EntityListeners({EmployeeListner.class}) // call the appropriate listener on lifecycle event
+@EntityListeners({EmployeeListner.class}) // call the appropriate listener on life cycle event
+@NamedQueries({
+	@NamedQuery(name="Employee.findBySalary",
+	query="select e from Employee e where e.salary between :minSalary and :maxSalary")
+	//identify the query to fetch employee objects with properties and parameters
+	//all the params are to be declared using @Param("<name>") in the DAO interface.
+	
+	,
+	@NamedQuery(name="Employee.findByDesignation",
+				query="select e from Employee e where e.designation=:designation")
+			//identify the method in DAO and pass necessary params
+})
+
 public class Employee {
 
 	int empno;
@@ -33,9 +49,9 @@ public class Employee {
 	
 	
 	
-	
 	@ManyToOne //one employee is associated with one of many departments
 	@JoinColumn(name="fk_department_number") // foreign key column to store the associate deptno
+	@org.springframework.data.annotation.Transient //ignore this property when storing employee data in mongoDB
 	public Department getCurrentDepartment() {
 		return currentDepartment;
 	}
@@ -50,7 +66,7 @@ public class Employee {
 	@JoinTable(name="JPA_Project_Assignments", //provide the join table name
 				joinColumns= {@JoinColumn(name="fk_empno")}, // foreign key column for current class
 				inverseJoinColumns= {@JoinColumn(name="fk_projectId")}) //foreign key column for collection
-	
+	@org.springframework.data.annotation.Transient //ignore this property when storing employee data in mongoDB
 	public Set<Project> getProjectsAssigned() {
 		return projectsAssigned;
 	}
