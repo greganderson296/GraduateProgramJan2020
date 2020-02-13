@@ -21,7 +21,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.FormParam;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+
+@XmlRootElement //declares the entity to be transformed to XML/JSON
 @Entity //declares the class as Entity, to be managed by JPA
 @Table(name="JPA_Employees") //declare the table name associated with this class
 @EntityListeners({EmployeeListner.class}) // call the appropriate listener on life cycle event
@@ -38,10 +43,17 @@ import javax.persistence.Transient;
 })
 
 public class Employee {
+	
 
 	int empno;
+	
+	@FormParam("name")
 	String name;
+	
+	@FormParam("Salary")
 	double salary;
+	
+	@FormParam("designation")
 	Designation designation;
 	
 	Department currentDepartment;
@@ -52,6 +64,7 @@ public class Employee {
 	@ManyToOne //one employee is associated with one of many departments
 	@JoinColumn(name="fk_department_number") // foreign key column to store the associate deptno
 	@org.springframework.data.annotation.Transient //ignore this property when storing employee data in mongoDB
+	@XmlTransient // ignore the association property when shared via Service
 	public Department getCurrentDepartment() {
 		return currentDepartment;
 	}
@@ -67,6 +80,7 @@ public class Employee {
 				joinColumns= {@JoinColumn(name="fk_empno")}, // foreign key column for current class
 				inverseJoinColumns= {@JoinColumn(name="fk_projectId")}) //foreign key column for collection
 	@org.springframework.data.annotation.Transient //ignore this property when storing employee data in mongoDB
+	@XmlTransient // ignore the association property when shared via service
 	public Set<Project> getProjectsAssigned() {
 		return projectsAssigned;
 	}
