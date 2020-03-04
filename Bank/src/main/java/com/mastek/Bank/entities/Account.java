@@ -11,21 +11,31 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.ws.rs.FormParam;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+@XmlRootElement
 @Entity
 @Table(name="JPA_ACCOUNT")
 public class Account {
 	
+	
 	int accountId;
+	
+	@FormParam("bankName")
 	String bankName;
+	
+	@FormParam("accountNo")
 	long accountNo;
 	
-	// test
+	
 	
 	private Set<Customer> customerAssigned = new HashSet<>();
 	
 	
 	@ManyToMany(mappedBy="accountAssigned")
+	@XmlTransient
 	public Set<Customer> getCustomerAssigned() {
 		return customerAssigned;
 	}
@@ -40,6 +50,7 @@ public class Account {
 	
 	
 	@OneToMany(mappedBy="linkedAccount", cascade= CascadeType.ALL)
+	@XmlTransient
 	public Set<Transaction> getTransactionHistory() {
 		return transactionHistory;
 	}

@@ -7,19 +7,29 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.ws.rs.FormParam;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+@XmlRootElement
 @Entity
 @Table(name="JPA_TRANSACTION")
 public class Transaction {
 	
+	
 	int transactionId;
+	
+	@FormParam("amount")
 	double amount;
+	
+	@FormParam("paymentType")
 	String paymentType;
 	
 	private Account linkedAccount;
 	
 	
 	@ManyToOne
+	@XmlTransient
 	@JoinColumn(name="fk_account_number")
 	public Account getLinkedAccount() {
 		return linkedAccount;

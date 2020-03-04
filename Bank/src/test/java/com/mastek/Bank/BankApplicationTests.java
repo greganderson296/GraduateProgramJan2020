@@ -77,15 +77,15 @@ class BankApplicationTests {
 		assertNotNull(tra, "Transaction not Added");
 	}
 	
-	//@Test
+	@Test
 	void testAssignAccountToCustomer() {
-		Customer cus = banDAO.assignCustomerToAccount(84, 85);
+		Customer cus = banDAO.assignCustomerToAccount(157, 85);
 		assertTrue(cus.getAccountAssigned().size()>0,"Customer not Assigned");
 	}
 	
 	//@Test
 	void testAssignTransactionToAccount() {
-	Transaction tra = banDAO.assignTransactionToAccount(89, 88);
+	Transaction tra = banDAO.assignTransactionToAccount(86, 85);
 	assertNotNull(tra.getLinkedAccount(),"Account not Assigned");
 	}
 	
@@ -149,7 +149,7 @@ class BankApplicationTests {
 			assertNotNull(trans, "Transfer not Added");
 		}
 		
-		@Test
+		//@Test
 		void testTransferRequests() {
 			
 			Transfer trans = banDAO.assignTransferToTransaction(1, 92);

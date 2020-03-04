@@ -1,5 +1,8 @@
 package com.mastek.hrapp.services;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.transaction.Transactional;
@@ -9,7 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.mastek.hrapp.apis.DepartmentAPI;
 import com.mastek.hrapp.apis.EmployeeAPI;
+import com.mastek.hrapp.apis.ProjectAPI;
 import com.mastek.hrapp.dao.DepartmentJPADAO;
 import com.mastek.hrapp.dao.EmployeeJPADAO;
 import com.mastek.hrapp.dao.JobPositionDAO;
@@ -22,7 +27,7 @@ import com.mastek.hrapp.entities.Project;
 @Component //marking the class as bean to be created
 @Scope("singleton") // singleton: One object used across test cases, prototype: one object per request
 
-public class EmployeeService implements EmployeeAPI{
+public class EmployeeService implements EmployeeAPI, DepartmentAPI, ProjectAPI{
 	
 	String exampleProperty;
 	
@@ -107,7 +112,7 @@ public class EmployeeService implements EmployeeAPI{
 
 	@Override
 	public Iterable<Employee> listAllEmployees() {
-		System.out.println("Listing all EMployees");
+		System.out.println("Listing all Employees");
 		return empDAO.findAll();	}
 
 	@Override
@@ -119,6 +124,61 @@ public class EmployeeService implements EmployeeAPI{
 	public Employee registerNewEmployee(Employee newEmployee) {
 		newEmployee = empDAO.save(newEmployee);
 		return newEmployee;
+		}
+	
+	@Override
+	public Iterable<Department> listAllDepartments() {
+		System.out.println("Listing all Departments");
+		return depDAO.findAll();	}
+
+	@Override
+	public Department findByDepno(int depno) {
+		return depDAO.findById(depno).get();
 	}
+
+	@Override
+	public Department registerNewDepartment(Department newDepartment) {
+		newDepartment = depDAO.save(newDepartment);
+		return newDepartment;
+	}
+	
+	@Override
+	public Iterable<Project> listAllProjects() {
+		System.out.println("Listing all Projects");
+		return proDAO.findAll();	}
+
+
+
+	@Override
+	public Project registerNewProject(Project newProject) {
+		newProject = proDAO.save(newProject);
+		return newProject;
+	}
+
+	@Override
+	public Project findByProno(int prono) {
+		return proDAO.findById(prono).get();
+	}
+
+	@Override
+	@Transactional //to fetch all collections
+	public Set<Project> getEmployeeProjects(int empno) {
+		Employee currentEmp = empDAO.findById(empno).get();
+		int count = currentEmp.getProjectsAssigned().size();
+		System.out.println(count +" Projects found");
+		
+		Set<Project> projects = currentEmp.getProjectsAssigned();
+		return projects;
+	}
+
+	@Override
+	@Transactional
+	public Project registerProjectForEmployee(int empno, Project newProject) {
+		newProject = proDAO.save(newProject);
+		assignEmployeeToProject(empno, newProject.getProno());
+		return newProject;
+	}
+	
+	
 
 }

@@ -12,19 +12,29 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.ws.rs.FormParam;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+@XmlRootElement
 @Entity
 @Table(name="JPA_Customer")
 public class Customer {
 	
+	
 	int custId;
+	
+	@FormParam("name")
 	String name;
+	
+	@FormParam("address")
 	String address;
 	
 	private Set<Account> accountAssigned = new HashSet<>();
 	
 	
 	@ManyToMany(cascade= CascadeType.ALL)
+	@XmlTransient
 	@JoinTable(name= "JPA_ACCOUNT_ASIGNMENTS",
 	joinColumns= {@JoinColumn(name="fk_CusId")}, 
 	inverseJoinColumns= {@JoinColumn(name="fk_AccId")}) 
